@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/int128/kubelogin/pkg/jwt"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/jwt"
 )
 
 type timeProvider time.Time

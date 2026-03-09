@@ -10,7 +10,7 @@ import (
 	"os"
 
 	"github.com/google/wire"
-	"github.com/int128/kubelogin/pkg/tlsclientconfig"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tlsclientconfig"
 )
 
 // Set provides an implementation and interface.

@@ -1,0 +1,105 @@
+# kld-stresstest default configuration
+namespace: ""                  # REQUIRED — no default, must be set explicitly
+duration: 24h
+output_dir: ./stress-results
+rng_seed: 0                    # 0 = random seed; nonzero = deterministic replay
+run_label: ""
+
+daemon_binary: kubelogin-daemon
+runtime_dir: ""
+socket_path: ""
+
+workload:
+  steady_weight: 70
+  burst_weight: 20
+  quiet_weight: 10
+
+  steady_min_conc: 1
+  steady_max_conc: 10
+  steady_min_delay: 100ms
+  steady_max_delay: 2s
+
+  burst_min_conc: 20
+  burst_max_conc: 100
+  burst_min_delay: 0ms
+  burst_max_delay: 500ms
+
+  quiet_min_conc: 0
+  quiet_max_conc: 1
+  quiet_min_delay: 2s
+  quiet_max_delay: 5s
+
+  phase_duration_min: 5m
+  phase_duration_max: 15m
+
+  command_weights:
+    read: 60
+    mutate: 20
+    invalid: 10
+    fuzz: 10
+
+  direct_ipc_workers: 5
+  direct_ipc_rate: 5
+
+  kubectl_timeout: 30s
+  sla_threshold: 2s
+
+  rate_limit:
+    steady_qps: 50
+    steady_burst: 100
+    burst_qps: 200
+    burst_burst: 200
+    quiet_qps: 5
+    quiet_burst: 10
+
+  max_resources: 200
+  kubeconfig_context: ""
+
+chaos:
+  enabled: true
+  initial_stability_period: 5m
+  global_cooldown: 30s
+
+  kill_daemon:
+    enabled: true
+    interval_min: 30m
+    interval_max: 60m
+
+  delete_socket:
+    enabled: true
+    interval_min: 15m
+    interval_max: 45m
+
+  corrupt_token_files:
+    enabled: true
+    interval_min: 30m
+    interval_max: 90m
+
+  fill_connections:
+    enabled: true
+    interval_min: 30m
+    interval_max: 60m
+    hold_duration: 5s
+    target_count: 260
+
+  fill_disk:
+    enabled: true
+    interval_min: 45m
+    interval_max: 90m
+    hold_duration: 10s
+    max_fill_bytes: 1073741824
+
+health:
+  poll_interval: 10s
+  hang_threshold: 30s
+  memory_warn_mb: 100
+  memory_kill_mb: 500
+  idle_aware_probing: true
+
+reaper:
+  interval: 5m
+  max_age: 1h
+
+report:
+  percentiles: [50, 90, 95, 99]
+  include_timeline: true

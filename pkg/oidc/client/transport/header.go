@@ -7,15 +7,18 @@ import "net/http"
 // Token retrievel fails when an auth code has been retrieved using Azure AD
 // Single Page Application due to the missing "Origin" header for CORS
 // validation.
-// https://github.com/int128/kubelogin/issues/1048
+// https://github.com/ZihaoZhou/kubelogin-daemon/issues/1048
 type WithHeader struct {
 	Base           http.RoundTripper
 	RequestHeaders map[string]string
 }
 
 func (t *WithHeader) RoundTrip(req *http.Request) (*http.Response, error) {
+	// SEC-MED-3: Clone the request before modifying headers.
+	// RoundTrip must not modify the original request (http.RoundTripper contract).
+	r := req.Clone(req.Context())
 	for key, value := range t.RequestHeaders {
-		req.Header.Set(key, value)
+		r.Header.Set(key, value)
 	}
-	return t.Base.RoundTrip(req)
+	return t.Base.RoundTrip(r)
 }

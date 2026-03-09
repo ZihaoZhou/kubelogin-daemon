@@ -12,8 +12,8 @@ import (
 
 	"github.com/gofrs/flock"
 	"github.com/google/wire"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/tokencache"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tokencache"
 	"github.com/zalando/go-keyring"
 )
 
@@ -165,7 +165,7 @@ func (r *Repository) Lock(config tokencache.Config, key tokencache.Key) (io.Clos
 		return nil, fmt.Errorf("could not create directory %s: %w", config.Directory, err)
 	}
 	// Do not lock the token cache file.
-	// https://github.com/int128/kubelogin/issues/1144
+	// https://github.com/ZihaoZhou/kubelogin-daemon/issues/1144
 	lockFilepath := filepath.Join(config.Directory, checksum+".lock")
 	lockFile := flock.New(lockFilepath)
 	if err := lockFile.Lock(); err != nil {
@@ -199,6 +199,11 @@ func encodeKey(tokenSet oidc.TokenSet) ([]byte, error) {
 		RefreshToken: tokenSet.RefreshToken,
 	}
 	return json.Marshal(&e)
+}
+
+// ComputeChecksum computes a deterministic cache key checksum from a tokencache.Key.
+func ComputeChecksum(key tokencache.Key) (string, error) {
+	return computeChecksum(key)
 }
 
 func computeChecksum(key tokencache.Key) (string, error) {

@@ -1,0 +1,25 @@
+version: 2
+
+builds:
+  - binary: kubelogin-daemon
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - formats: [binary]
+    name_template: "kubelogin-daemon_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+
+release:
+  github:
+    owner: ZihaoZhou
+    name: kubelogin-daemon

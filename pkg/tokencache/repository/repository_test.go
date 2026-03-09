@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/tlsclientconfig"
-	"github.com/int128/kubelogin/pkg/tokencache"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tlsclientconfig"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tokencache"
 )
 
 func TestRepository_FindByKey(t *testing.T) {

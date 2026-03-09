@@ -13,8 +13,12 @@ COPY pkg pkg
 
 ARG TARGETOS
 ARG TARGETARCH
-RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build
+# COMPAT-7: Explicitly name the output binary kubelogin-daemon (not the module's
+# default name) to avoid confusion with upstream kubelogin.
+RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -o kubelogin-daemon
 
 FROM gcr.io/distroless/base-debian12
-COPY --from=builder /builder/kubelogin /
-ENTRYPOINT ["/kubelogin"]
+COPY --from=builder /builder/kubelogin-daemon /
+# COMPAT-MED-2: Run as non-root. UID 65532 is the "nonroot" user in distroless images.
+USER 65532:65532
+ENTRYPOINT ["/kubelogin-daemon"]

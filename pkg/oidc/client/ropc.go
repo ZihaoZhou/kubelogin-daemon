@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/int128/kubelogin/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
 )
 
 // GetTokenByROPC performs the resource owner password credentials flow.

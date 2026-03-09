@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/int128/kubelogin/pkg/infrastructure/browser"
-	"github.com/int128/kubelogin/pkg/infrastructure/logger"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/oidc/client"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/browser"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/logger"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc/client"
 )
 
 type Option struct {

@@ -1,8 +1,8 @@
 package tokencache
 
 import (
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/tlsclientconfig"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tlsclientconfig"
 )
 
 // Key represents a key of a token cache.

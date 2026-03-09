@@ -1,6 +1,0 @@
-/bin/
-
-/cert/ca.*
-/cert/server.*
-
-/cluster/kubeconfig.yaml

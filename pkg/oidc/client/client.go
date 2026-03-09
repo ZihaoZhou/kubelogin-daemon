@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/clock"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/logger"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/pkce"
 	gooidc "github.com/coreos/go-oidc/v3/oidc"
-	"github.com/int128/kubelogin/pkg/infrastructure/clock"
-	"github.com/int128/kubelogin/pkg/infrastructure/logger"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/pkce"
 	"github.com/int128/oauth2dev"
 	"golang.org/x/oauth2"
 )
@@ -64,7 +64,8 @@ func (c *client) Refresh(ctx context.Context, refreshToken string) (*oidc.TokenS
 func (c *client) verifyToken(ctx context.Context, token *oauth2.Token, nonce string) (*oidc.TokenSet, error) {
 	idToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		return nil, fmt.Errorf("id_token is missing in the token response: %#v", token)
+		return nil, fmt.Errorf("id_token is missing in the token response (access_token present: %v, refresh_token present: %v, expiry: %s)",
+			token.AccessToken != "", token.RefreshToken != "", token.Expiry.Format("2006-01-02T15:04:05Z"))
 	}
 	verifier := c.provider.Verifier(&gooidc.Config{ClientID: c.oauth2Config.ClientID, Now: c.clock.Now})
 	verifiedIDToken, err := verifier.Verify(ctx, idToken)
@@ -72,13 +73,14 @@ func (c *client) verifyToken(ctx context.Context, token *oauth2.Token, nonce str
 		return nil, fmt.Errorf("could not verify the ID token: %w", err)
 	}
 	if nonce != "" && nonce != verifiedIDToken.Nonce {
-		return nil, fmt.Errorf("nonce did not match (wants %s but got %s)", nonce, verifiedIDToken.Nonce)
+		// SEC-4: Don't leak nonce values in error messages — they could aid replay attacks.
+		return nil, fmt.Errorf("nonce did not match (expected and actual values differ)")
 	}
 
 	if c.useAccessToken {
 		accessToken, ok := token.Extra("access_token").(string)
 		if !ok {
-			return nil, fmt.Errorf("access_token is missing in the token response: %#v", accessToken)
+			return nil, fmt.Errorf("access_token is missing in the token response")
 		}
 
 		// We intentionally do not perform a ClientID check here because there

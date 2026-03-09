@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/int128/kubelogin/pkg/infrastructure/browser"
-	"github.com/int128/kubelogin/pkg/infrastructure/logger"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/oidc/client"
-	"github.com/int128/kubelogin/pkg/pkce"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/browser"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/logger"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc/client"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/pkce"
 	"golang.org/x/sync/errgroup"
 )
 

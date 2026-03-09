@@ -5,10 +5,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/int128/kubelogin/mocks/github.com/int128/kubelogin/pkg/infrastructure/browser_mock"
-	"github.com/int128/kubelogin/mocks/github.com/int128/kubelogin/pkg/oidc/client_mock"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/testing/logger"
+	"github.com/ZihaoZhou/kubelogin-daemon/mocks/github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/browser_mock"
+	"github.com/ZihaoZhou/kubelogin-daemon/mocks/github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc/client_mock"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/testing/logger"
 	"github.com/int128/oauth2dev"
 	"github.com/stretchr/testify/mock"
 )

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/int128/kubelogin/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/clientcredentials"
 )

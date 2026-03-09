@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/int128/kubelogin/mocks/github.com/int128/kubelogin/pkg/infrastructure/browser_mock"
-	"github.com/int128/kubelogin/mocks/github.com/int128/kubelogin/pkg/oidc/client_mock"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/oidc/client"
-	"github.com/int128/kubelogin/pkg/pkce"
-	"github.com/int128/kubelogin/pkg/testing/logger"
+	"github.com/ZihaoZhou/kubelogin-daemon/mocks/github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/browser_mock"
+	"github.com/ZihaoZhou/kubelogin-daemon/mocks/github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc/client_mock"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc/client"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/pkce"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/testing/logger"
 	"github.com/stretchr/testify/mock"
 )
 

@@ -29,9 +29,17 @@ func DecodeWithoutVerify(s string) (*Claims, error) {
 	if err := json.Indent(&prettyJson, payload, "", "  "); err != nil {
 		return nil, fmt.Errorf("could not indent the json of token: %w", err)
 	}
+	// ROB-CRIT-1: Return zero Expiry if exp claim is missing.
+	// time.Unix(0, 0) is 1970-01-01, NOT Go's zero time (0001-01-01).
+	// Callers that check Expiry.IsZero() would miss this and treat the
+	// token as having a valid (but long-expired) expiry.
+	var expiry time.Time
+	if claims.ExpiresAt != 0 {
+		expiry = time.Unix(claims.ExpiresAt, 0)
+	}
 	return &Claims{
 		Subject: claims.Subject,
-		Expiry:  time.Unix(claims.ExpiresAt, 0),
+		Expiry:  expiry,
 		Pretty:  prettyJson.String(),
 	}, nil
 }

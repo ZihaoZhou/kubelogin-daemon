@@ -7,6 +7,17 @@
 /coverage.out
 
 /kubelogin
+/kubelogin-daemon
+/kubelogin-daemon-*
+/kld-stresstest-*
+/*.exe
 /kubectl-oidc_login
 /kubelogin_*.zip
 /kubelogin_*.zip.sha256
+
+# Local dev artifacts
+.claude/
+docs/plans/
+docs/archive/
+test-concurrent.sh
+dist/

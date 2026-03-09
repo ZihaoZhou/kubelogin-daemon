@@ -9,13 +9,13 @@ import (
 
 	gooidc "github.com/coreos/go-oidc/v3/oidc"
 	"github.com/google/wire"
-	"github.com/int128/kubelogin/pkg/infrastructure/clock"
-	"github.com/int128/kubelogin/pkg/infrastructure/logger"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/oidc/client/transport"
-	"github.com/int128/kubelogin/pkg/pkce"
-	"github.com/int128/kubelogin/pkg/tlsclientconfig"
-	"github.com/int128/kubelogin/pkg/tlsclientconfig/loader"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/clock"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/infrastructure/logger"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc/client/transport"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/pkce"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tlsclientconfig"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/tlsclientconfig/loader"
 	"golang.org/x/oauth2"
 )
 
@@ -68,6 +68,13 @@ func (f *Factory) New(ctx context.Context, prov oidc.Provider, tlsClientConfig t
 		endpoint.AuthStyle = oauth2.AuthStyleInParams
 	}
 
+	// SEC-CRIT-1: Copy the slice before appending to avoid mutating
+	// prov.ExtraScopes if its backing array has spare capacity.
+	// Same pattern as refresher.go (COMPAT-LOW-1).
+	scopes := make([]string, len(prov.ExtraScopes)+1)
+	copy(scopes, prov.ExtraScopes)
+	scopes[len(prov.ExtraScopes)] = gooidc.ScopeOpenID
+
 	return &client{
 		httpClient: httpClient,
 		provider:   provider,
@@ -76,7 +83,7 @@ func (f *Factory) New(ctx context.Context, prov oidc.Provider, tlsClientConfig t
 			ClientID:     prov.ClientID,
 			ClientSecret: prov.ClientSecret,
 			RedirectURL:  prov.RedirectURL,
-			Scopes:       append(prov.ExtraScopes, gooidc.ScopeOpenID),
+			Scopes:       scopes,
 		},
 		clock:                f.Clock,
 		logger:               f.Logger,

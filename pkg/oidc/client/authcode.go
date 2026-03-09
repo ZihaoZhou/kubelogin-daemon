@@ -6,8 +6,8 @@ import (
 	"net/url"
 
 	gooidc "github.com/coreos/go-oidc/v3/oidc"
-	"github.com/int128/kubelogin/pkg/oidc"
-	"github.com/int128/kubelogin/pkg/pkce"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/oidc"
+	"github.com/ZihaoZhou/kubelogin-daemon/pkg/pkce"
 	"github.com/int128/oauth2cli"
 	"golang.org/x/oauth2"
 )
