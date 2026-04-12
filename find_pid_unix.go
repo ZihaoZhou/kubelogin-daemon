@@ -3,9 +3,12 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"syscall"
@@ -18,8 +21,8 @@ import (
 // which process holds that inode. This is the same approach as "lsof" but
 // without shelling out.
 //
-// On macOS/other: returns 0 (not supported without lsof, and shelling out
-// to lsof is fragile). The caller should handle pid==0 gracefully.
+// On macOS/other: falls back to lsof(1) to find the owning process.
+// lsof is pre-installed on macOS and most BSDs.
 func findPIDBySocket(socketPath string) int {
 	// Get the socket's inode from stat.
 	var stat syscall.Stat_t
@@ -28,13 +31,19 @@ func findPIDBySocket(socketPath string) int {
 	}
 	targetIno := stat.Ino
 	if targetIno == 0 {
-		return 0 // macOS doesn't report meaningful inodes for sockets
+		// macOS doesn't report meaningful inodes for Unix sockets.
+		// Fall back to lsof to find the owning process.
+		if runtime.GOOS == "darwin" {
+			return findPIDByLsof(socketPath)
+		}
+		return 0
 	}
 
 	// Scan /proc/*/fd/* for a symlink pointing to socket:[inode]
 	procs, err := os.ReadDir("/proc")
 	if err != nil {
-		return 0 // not Linux, or no /proc
+		// Not Linux (no /proc). Try lsof as fallback.
+		return findPIDByLsof(socketPath)
 	}
 
 	myPID := os.Getpid()
@@ -66,5 +75,42 @@ func findPIDBySocket(socketPath string) int {
 		}
 	}
 
+	return 0
+}
+
+// findPIDByLsof uses lsof to find the PID of the process listening on a Unix socket.
+// This is the fallback for macOS and other systems without /proc.
+// lsof is pre-installed on macOS and most BSDs.
+func findPIDByLsof(socketPath string) int {
+	// lsof -U -a -F p <path>
+	//   -U: only Unix sockets
+	//   -a: AND the filters (socket type AND path)
+	//   -F p: machine-readable output, PID lines prefixed with 'p'
+	// Timeout via context to avoid hanging on pathological lsof.
+	cmd := exec.Command("lsof", "-U", "-a", "-F", "p", socketPath)
+	cmd.Stdin = nil
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = nil
+	if err := cmd.Run(); err != nil {
+		return 0
+	}
+
+	myPID := os.Getpid()
+	for _, line := range strings.Split(out.String(), "\n") {
+		if !strings.HasPrefix(line, "p") {
+			continue
+		}
+		pid, err := strconv.Atoi(line[1:])
+		if err != nil {
+			continue
+		}
+		if pid == myPID {
+			continue
+		}
+		if pid > 0 {
+			return pid
+		}
+	}
 	return 0
 }
